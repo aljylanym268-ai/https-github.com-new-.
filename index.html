@@ -4,11 +4,16 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>في ذكرى والدي الغالي</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
             --gold: #d4af37;
             --gold-light: #f5e6c8;
+            --gold-glow: rgba(212, 175, 55, 0.3);
             --dark: #0a0a12;
+            --glass: rgba(255, 255, 255, 0.04);
         }
         * {
             margin: 0;
@@ -16,38 +21,59 @@
             box-sizing: border-box;
         }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(180deg, #0a0a12 0%, #12121f 50%, #0d0d18 100%);
+            font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif;
+            background: #0a0a12;
             color: #e8e0d0;
             min-height: 100vh;
             line-height: 1.8;
+            overflow-x: hidden;
+        }
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
         }
         .container {
-            max-width: 900px;
+            max-width: 960px;
             margin: 0 auto;
             padding: 20px;
+            position: relative;
+            z-index: 1;
         }
         @keyframes fadeIn {
             from {
                 opacity: 0;
-                transform: translateY(20px);
+                transform: translateY(30px) scale(0.96);
             }
             to {
                 opacity: 1;
-                transform: translateY(0);
+                transform: translateY(0) scale(1);
             }
         }
-        @keyframes glow {
+        @keyframes float {
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+        @keyframes pulseGlow {
             0%,
             100% {
                 box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
             }
             50% {
-                box-shadow: 0 0 40px rgba(212, 175, 55, 0.5);
+                box-shadow: 0 0 50px rgba(212, 175, 55, 0.6);
             }
         }
         .fade-in {
-            animation: fadeIn 0.8s ease forwards;
+            animation: fadeIn 0.9s cubic-bezier(0.23, 1, 0.32, 1) forwards;
             opacity: 0;
         }
         .d1 {
@@ -62,22 +88,49 @@
         .d4 {
             animation-delay: 0.7s;
         }
+        .d5 {
+            animation-delay: 0.9s;
+        }
         .text-center {
             text-align: center;
         }
+        .card {
+            background: var(--glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            border-radius: 28px;
+            padding: 28px;
+            margin-bottom: 24px;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        .card-gold {
+            background: linear-gradient(145deg, rgba(212, 175, 55, 0.12), rgba(139, 115, 85, 0.04));
+            border-color: rgba(212, 175, 55, 0.3);
+        }
         .hero {
             text-align: center;
-            padding: 40px 0 20px;
+            padding: 30px 0 15px;
+        }
+        .hero .icon-candle {
+            font-size: 3.5rem;
+            display: inline-block;
+            animation: float 3s ease-in-out infinite;
         }
         .hero h1 {
-            font-size: 2.2rem;
-            color: var(--gold-light);
+            font-size: 2.6rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--gold-light), var(--gold), #b8941f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             margin: 10px 0;
         }
         .hero .subtitle {
             color: var(--gold);
-            letter-spacing: 2px;
-            font-size: 0.9rem;
+            letter-spacing: 3px;
+            font-weight: 300;
         }
         .main-photo-wrap {
             display: inline-block;
@@ -87,10 +140,16 @@
         .main-photo-wrap::before {
             content: '';
             position: absolute;
-            inset: -8px;
+            inset: -10px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--gold), #8b7355, var(--gold));
-            animation: glow 3s ease infinite;
+            background: conic-gradient(from 0deg, var(--gold), #8b7355, var(--gold), #5a4a3a, var(--gold));
+            animation: spin 6s linear infinite;
+            z-index: 0;
+        }
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
         }
         .main-photo {
             width: 200px;
@@ -102,155 +161,249 @@
             border: 4px solid var(--dark);
             display: block;
             background: #1a1a2e;
+            box-shadow: 0 0 40px rgba(212, 175, 55, 0.2);
         }
         .father-name {
-            font-size: 1.6rem;
+            font-size: 2rem;
+            font-weight: 700;
             color: var(--gold-light);
             margin-top: 15px;
         }
         .dates {
-            color: #888;
-            font-size: 0.9rem;
+            color: #aaa;
+            font-size: 1rem;
         }
-        .card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(212, 175, 55, 0.12);
-            border-radius: 20px;
-            padding: 25px;
-            margin-bottom: 20px;
-            backdrop-filter: blur(10px);
+        .time-counter {
+            background: rgba(212, 175, 55, 0.05);
+            border-radius: 60px;
+            padding: 15px 25px;
+            display: inline-block;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            margin: 10px auto;
+            font-size: 1.1rem;
+            backdrop-filter: blur(4px);
         }
-        .card-gold {
-            background: linear-gradient(135deg, rgba(212, 175, 55, 0.08), rgba(139, 115, 85, 0.04));
-            border-color: rgba(212, 175, 55, 0.2);
+        .time-counter span {
+            color: var(--gold);
+            font-weight: 700;
+            font-size: 1.3rem;
         }
         .verse {
             font-family: 'Times New Roman', serif;
-            font-size: 1.4rem;
+            font-size: 1.5rem;
             color: var(--gold-light);
-            line-height: 2.4;
+            line-height: 2.6;
             text-align: center;
-        }
-        .section-title {
-            color: var(--gold);
-            font-size: 1.4rem;
-            margin-bottom: 20px;
-            text-align: center;
-            position: relative;
-        }
-        .section-title::after {
-            content: '';
-            display: block;
-            width: 60px;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--gold), transparent);
-            margin: 10px auto 0;
-        }
-        .gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
-        }
-        .gallery-item {
-            position: relative;
-            border-radius: 16px;
-            overflow: hidden;
-            border: 2px solid rgba(212, 175, 55, 0.25);
-            transition: all 0.3s;
-            cursor: pointer;
-        }
-        .gallery-item:hover {
-            transform: translateY(-5px);
-            border-color: var(--gold);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
-        }
-        .gallery-item img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            display: block;
-            background: #1a1a2e;
-        }
-        .gallery-caption {
-            padding: 10px;
-            text-align: center;
-            color: #aaa;
-            font-size: 0.85rem;
-            background: rgba(0, 0, 0, 0.3);
         }
         .azkar-item {
             background: rgba(255, 255, 255, 0.02);
             border-right: 4px solid var(--gold);
-            padding: 18px;
-            margin-bottom: 12px;
-            border-radius: 12px;
+            padding: 18px 20px;
+            margin-bottom: 14px;
+            border-radius: 16px;
             border: 1px solid rgba(212, 175, 55, 0.08);
             border-right-width: 4px;
             color: #d0c8b8;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 12px;
+            transition: 0.3s;
         }
-        .azkar-item .counter {
+        .azkar-item:hover {
+            background: rgba(212, 175, 55, 0.05);
+            border-color: var(--gold);
+        }
+        .azkar-item .text-wrap {
+            flex: 1 1 60%;
+        }
+        .azkar-item .counter-badge {
             display: inline-block;
             background: var(--gold);
             color: var(--dark);
-            padding: 2px 10px;
-            border-radius: 20px;
+            padding: 2px 14px;
+            border-radius: 30px;
             font-size: 0.8rem;
-            font-weight: bold;
+            font-weight: 900;
             margin-left: 10px;
         }
-        .comment-form {
+        .azkar-actions {
             display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-bottom: 25px;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
         }
-        .comment-form input,
-        .comment-form textarea {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(212, 175, 55, 0.2);
-            border-radius: 12px;
-            padding: 14px;
-            color: #e8e0d0;
+        .azkar-actions .count-display {
+            min-width: 40px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--gold);
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 10px;
+            border-radius: 30px;
+        }
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            border-radius: 40px;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
             font-family: inherit;
-            font-size: 1rem;
         }
-        .comment-form input::placeholder,
-        .comment-form textarea::placeholder {
-            color: #666;
-        }
-        .btn {
+        .btn-gold {
             background: linear-gradient(135deg, var(--gold), #b8941f);
             color: var(--dark);
-            border: none;
-            padding: 14px 30px;
-            border-radius: 12px;
-            font-family: inherit;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
         }
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3);
+        .btn-gold:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px var(--gold-glow);
         }
-        .btn-outline {
+        .btn-outline-gold {
             background: transparent;
             border: 2px solid var(--gold);
             color: var(--gold);
         }
-        .btn-outline:hover {
+        .btn-outline-gold:hover {
             background: var(--gold);
             color: var(--dark);
         }
         .btn-danger {
-            background: linear-gradient(135deg, #c0392b, #a93226);
+            background: #c0392b;
             color: white;
         }
         .btn-danger:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(192, 57, 43, 0.4);
+            filter: brightness(1.2);
+        }
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 18px;
+            margin-top: 20px;
+        }
+        .gallery-item {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 2px solid rgba(212, 175, 55, 0.2);
+            transition: all 0.3s;
+            cursor: pointer;
+            aspect-ratio: 1 / 1;
+            background: #111;
+        }
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: 0.4s;
+        }
+        .gallery-item:hover img {
+            transform: scale(1.08);
+        }
+        .gallery-item:hover {
+            border-color: var(--gold);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+        }
+        .gallery-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 12px;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+            color: #ddd;
+            font-size: 0.85rem;
+            text-align: center;
+        }
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.94);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 20px;
+            backdrop-filter: blur(8px);
+        }
+        .modal-content {
+            max-width: 90%;
+            max-height: 80vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .modal-content img {
+            max-width: 100%;
+            max-height: 80vh;
+            border-radius: 16px;
+            box-shadow: 0 0 60px rgba(212, 175, 55, 0.2);
+            border: 2px solid rgba(212, 175, 55, 0.3);
+        }
+        .modal-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            font-size: 2.5rem;
+            padding: 10px 18px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: 0.3s;
+            backdrop-filter: blur(4px);
+            line-height: 1;
+        }
+        .modal-nav:hover {
+            background: var(--gold);
+            color: #000;
+        }
+        .modal-nav.prev {
+            right: -70px;
+        }
+        .modal-nav.next {
+            left: -70px;
+        }
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2rem;
+            color: #fff;
+            background: rgba(0, 0, 0, 0.5);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 1px solid #555;
+            transition: 0.3s;
+        }
+        .modal-close:hover {
+            background: #c0392b;
+            border-color: #c0392b;
+        }
+        @media (max-width: 700px) {
+            .modal-nav {
+                font-size: 1.5rem;
+                padding: 6px 12px;
+            }
+            .modal-nav.prev {
+                right: 10px;
+            }
+            .modal-nav.next {
+                left: 10px;
+            }
+            .modal-content {
+                max-width: 100%;
+            }
         }
         .comment-item {
             background: rgba(255, 255, 255, 0.02);
@@ -261,8 +414,7 @@
         }
         .comment-name {
             color: var(--gold);
-            font-weight: bold;
-            margin-bottom: 5px;
+            font-weight: 700;
         }
         .comment-text {
             color: #c0c0c0;
@@ -270,92 +422,36 @@
         .comment-date {
             color: #555;
             font-size: 0.75rem;
-            margin-top: 8px;
-        }
-        .visitor-dua {
-            text-align: center;
-            padding: 40px 20px;
-        }
-        .dua-box {
-            display: inline-block;
-            background: rgba(212, 175, 55, 0.1);
-            border: 1px solid rgba(212, 175, 55, 0.25);
-            border-radius: 20px;
-            padding: 25px 40px;
-            margin-top: 15px;
-        }
-        .dua-box p {
-            color: var(--gold);
-            font-size: 1.2rem;
-            font-weight: bold;
-        }
-        .footer {
-            text-align: center;
-            padding: 40px 20px;
-            color: #555;
-            font-size: 0.85rem;
-        }
-        .footer .divider {
-            width: 100px;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--gold), transparent);
-            margin: 0 auto 20px;
-        }
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        .modal-content {
-            max-width: 90%;
-            max-height: 90%;
-            border-radius: 16px;
-            overflow: hidden;
-        }
-        .modal-content img {
-            max-width: 100%;
-            max-height: 85vh;
-            display: block;
-            border-radius: 12px;
         }
         .admin-login {
-            max-width: 400px;
+            max-width: 420px;
             margin: 80px auto;
-            text-align: center;
-        }
-        .admin-login h2 {
-            color: var(--gold);
-            margin-bottom: 25px;
         }
         .tabs {
             display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            padding-bottom: 10px;
+            gap: 8px;
             flex-wrap: wrap;
+            margin-bottom: 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            padding-bottom: 15px;
         }
         .tab {
-            padding: 10px 20px;
+            padding: 10px 22px;
             background: none;
             border: none;
             color: #888;
             font-family: inherit;
+            font-weight: 700;
             cursor: pointer;
-            border-radius: 8px;
-            transition: all 0.3s;
+            border-radius: 40px;
+            transition: 0.3s;
         }
         .tab.active {
             color: var(--gold);
-            background: rgba(212, 175, 55, 0.1);
+            background: rgba(212, 175, 55, 0.15);
         }
         .tab:hover {
-            color: var(--gold-light);
+            color: #fff;
         }
         .admin-section {
             display: none;
@@ -363,171 +459,298 @@
         .admin-section.active {
             display: block;
         }
-        .admin-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
-        .admin-table th,
-        .admin-table td {
-            padding: 12px;
-            text-align: right;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-        }
-        .admin-table th {
-            color: var(--gold);
-            background: rgba(212, 175, 55, 0.05);
-        }
-        .admin-table td {
-            color: #bbb;
-            font-size: 0.9rem;
-        }
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
             gap: 15px;
-            margin-bottom: 25px;
+            margin-bottom: 30px;
         }
         .stat-card {
             background: rgba(212, 175, 55, 0.05);
             border: 1px solid rgba(212, 175, 55, 0.15);
-            border-radius: 16px;
+            border-radius: 20px;
             padding: 20px;
             text-align: center;
         }
         .stat-number {
-            font-size: 2rem;
+            font-size: 2.2rem;
             color: var(--gold);
-            font-weight: bold;
+            font-weight: 900;
         }
         .stat-label {
             color: #888;
-            font-size: 0.85rem;
-            margin-top: 5px;
+            font-size: 0.8rem;
+        }
+        .comment-form input,
+        .comment-form textarea {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            border-radius: 16px;
+            padding: 14px;
+            color: #e8e0d0;
+            font-family: inherit;
+            font-size: 1rem;
+            width: 100%;
+        }
+        .comment-form textarea {
+            resize: vertical;
+        }
+        .btn {
+            background: linear-gradient(135deg, var(--gold), #b8941f);
+            color: var(--dark);
+            border: none;
+            padding: 14px 36px;
+            border-radius: 60px;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 900;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px var(--gold-glow);
+        }
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--gold);
+            color: var(--gold);
+        }
+        .btn-outline:hover {
+            background: var(--gold);
+            color: var(--dark);
         }
         .toast {
             position: fixed;
-            top: 20px;
+            top: 25px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(30, 30, 40, 0.98);
+            background: rgba(20, 20, 30, 0.98);
             border: 1px solid var(--gold);
             color: var(--gold-light);
-            padding: 15px 30px;
-            border-radius: 12px;
+            padding: 16px 36px;
+            border-radius: 60px;
             z-index: 9999;
-            animation: fadeIn 0.3s ease;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.4s ease;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+            font-weight: 700;
+            backdrop-filter: blur(8px);
+        }
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .admin-table th,
+        .admin-table td {
+            padding: 12px 8px;
+            text-align: right;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .admin-table th {
+            color: var(--gold);
+        }
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: #555;
+        }
+        .footer .divider {
+            width: 80px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            margin: 0 auto 20px;
         }
         @media (max-width: 600px) {
             .hero h1 {
-                font-size: 1.6rem;
-            }
-            .gallery {
-                grid-template-columns: repeat(2, 1fr);
+                font-size: 1.9rem;
             }
             .main-photo {
                 width: 150px;
                 height: 150px;
             }
+            .gallery {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .azkar-item {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .azkar-actions {
+                justify-content: flex-start;
+            }
+            .modal-nav {
+                display: none;
+            }
+            .container {
+                padding: 12px;
+            }
+            .card {
+                padding: 18px;
+            }
         }
     </style>
 </head>
 <body>
+
+    <!-- خلفية الجسيمات -->
+    <canvas id="particles-canvas"></canvas>
+
+    <!-- العنصر الرئيسي الذي ستحقن فيه الصفحات -->
+    <div id="app-root"></div>
+
     <script>
-        // =================================================
-        // ⚙️  إعدادات الموقع (عدل كلمة المرور هنا)
-        // =================================================
+        // ============================================================
+        //  ⚙️  الإعدادات - كلمة المرور
+        // ============================================================
         const ADMIN_PASS = 'abu2024';
 
-        // =================================================
-        // 📦  قاعدة البيانات المحلية (localStorage)
-        // =================================================
+        // ============================================================
+        //  📦  قاعدة البيانات (localStorage) مع تهيئة افتراضية
+        // ============================================================
         const DB = {
             get(k) {
-                try { return JSON.parse(localStorage.getItem('mem_' + k) || 'null'); } catch (e) { return null; }
+                try { return JSON.parse(localStorage.getItem('mem_v2_' + k) || 'null'); } catch (e) { return null; }
             },
             set(k, v) {
-                localStorage.setItem('mem_' + k, JSON.stringify(v));
+                localStorage.setItem('mem_v2_' + k, JSON.stringify(v));
             },
             init() {
-                if (!this.get('settings')) this.set('settings', {
-                    father_name: 'والدي الغالي',
-                    birth_date: '١٩٦٠',
-                    death_date: '٢٠٢٤',
-                    main_photo_url: ''
-                });
-                if (!this.get('azkar')) this.set('azkar', [
-                    { id: '1', text: 'اللهم اغفر له وارحمه، وعافه واعف عنه، وأكرم نزله، ووسع مدخله، واغسله بالماء والثلج والبرد، ونقه من الذنوب كما ينقى الثوب الأبيض من الدنس',
-                        repeat_count: 1 },
-                    { id: '2', text: 'اللهم أبدله داراً خيراً من داره، وأهلاً خيراً من أهله، وأدخله الجنة وأعذه من عذاب القبر ومن عذاب النار',
-                        repeat_count: 1 },
-                    { id: '3', text: 'اللهم اجعل قبره روضة من رياض الجنة، ولا تجعله حفرة من حفر النار، وافتح له باباً إلى الجنة',
-                        repeat_count: 1 },
-                    { id: '4', text: 'اللهم ثبته عند السؤال، وبشره بالجنة، واجمعنا به في الفردوس الأعلى',
-                        repeat_count: 1 }
-                ]);
+                // التأكد من وجود الإعدادات الأساسية
+                if (!this.get('settings')) {
+                    this.set('settings', {
+                        father_name: 'والدي الغالي',
+                        birth_date: '1960-01-01',
+                        death_date: '2024-01-15',
+                        main_photo_url: ''
+                    });
+                }
+                if (!this.get('azkar')) {
+                    this.set('azkar', [{
+                        id: 'z1',
+                        text: 'اللهم اغفر له وارحمه، وعافه واعف عنه، وأكرم نزله، ووسع مدخله، واغسله بالماء والثلج والبرد، ونقه من الذنوب كما ينقى الثوب الأبيض من الدنس',
+                        repeat_count: 1
+                    }, {
+                        id: 'z2',
+                        text: 'اللهم أبدله داراً خيراً من داره، وأهلاً خيراً من أهله، وأدخله الجنة وأعذه من عذاب القبر ومن عذاب النار',
+                        repeat_count: 1
+                    }, {
+                        id: 'z3',
+                        text: 'اللهم اجعل قبره روضة من رياض الجنة، ولا تجعله حفرة من حفر النار، وافتح له باباً إلى الجنة',
+                        repeat_count: 1
+                    }, {
+                        id: 'z4',
+                        text: 'اللهم ثبته عند السؤال، وبشره بالجنة، واجمعنا به في الفردوس الأعلى',
+                        repeat_count: 1
+                    }]);
+                }
                 if (!this.get('photos')) this.set('photos', []);
                 if (!this.get('comments')) this.set('comments', []);
                 if (!this.get('memories')) this.set('memories', []);
+                if (!this.get('counts')) this.set('counts', {});
             }
         };
 
-        // =================================================
-        // 🌐  الحالة العامة
-        // =================================================
+        // ============================================================
+        //  🌐  الحالة العامة
+        // ============================================================
         let db = {};
         let isAdmin = false;
+        let currentGalleryIndex = 0;
+        let galleryImages = [];
 
-        // =================================================
-        // 🛠️  دوال مساعدة
-        // =================================================
+        // ============================================================
+        //  🛠️  دوال مساعدة
+        // ============================================================
         function $(id) { return document.getElementById(id); }
 
-        function esc(t) {
-            const d = document.createElement('div');
+        function esc(t) { const d = document.createElement('div');
             d.textContent = t || '';
-            return d.innerHTML;
-        }
+            return d.innerHTML; }
 
         function toast(msg) {
             const t = document.createElement('div');
             t.className = 'toast';
             t.textContent = msg;
             document.body.appendChild(t);
-            setTimeout(() => t.remove(), 3000);
+            setTimeout(() => t.remove(), 2800);
         }
 
-        function openModal(url) {
-            const m = document.createElement('div');
-            m.className = 'modal-overlay';
-            m.innerHTML = '<div class="modal-content"><img src="' + esc(url) +
-                '" style="max-width:100%;max-height:85vh;border-radius:12px;" onclick="this.parentElement.parentElement.remove()"></div>';
-            m.onclick = (e) => { if (e.target === m) m.remove(); };
-            document.body.appendChild(m);
+        function generateId() { return Date.now().toString(36) + Math.random().toString(36).substr(2, 6); }
+
+        // ============================================================
+        //  🎨  خلفية الجسيمات (نجوم متحركة)
+        // ============================================================
+        function initParticles() {
+            const canvas = document.getElementById('particles-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let w, h;
+            const particles = [];
+            const count = 90;
+
+            function resize() {
+                w = canvas.width = window.innerWidth;
+                h = canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resize);
+            resize();
+
+            for (let i = 0; i < count; i++) {
+                particles.push({
+                    x: Math.random() * w,
+                    y: Math.random() * h,
+                    r: Math.random() * 2 + 0.5,
+                    dx: (Math.random() - 0.5) * 0.3,
+                    dy: (Math.random() - 0.5) * 0.3,
+                    alpha: Math.random() * 0.8 + 0.2,
+                    pulse: Math.random() * Math.PI * 2
+                });
+            }
+
+            function draw() {
+                ctx.clearRect(0, 0, w, h);
+                particles.forEach(p => {
+                    p.x += p.dx;
+                    p.y += p.dy;
+                    p.pulse += 0.02;
+                    if (p.x < 0 || p.x > w) p.dx *= -1;
+                    if (p.y < 0 || p.y > h) p.dy *= -1;
+                    const alpha = p.alpha * (0.7 + 0.3 * Math.sin(p.pulse));
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(212, 175, 55, ${alpha})`;
+                    ctx.shadowColor = 'rgba(212, 175, 55, 0.3)';
+                    ctx.shadowBlur = 10;
+                    ctx.fill();
+                });
+                requestAnimationFrame(draw);
+            }
+            draw();
         }
 
-        function generateId() { return Date.now().toString(36) + Math.random().toString(36).substr(2, 5); }
-
-        // =================================================
-        // 🚀  تهيئة الموقع
-        // =================================================
+        // ============================================================
+        //  🚀  تهيئة الموقع
+        // ============================================================
         function init() {
+            // تهيئة قاعدة البيانات أولاً
             DB.init();
+            // قراءة جميع البيانات
             db = {
                 settings: DB.get('settings') || {},
                 photos: DB.get('photos') || [],
                 comments: DB.get('comments') || [],
                 azkar: DB.get('azkar') || [],
-                memories: DB.get('memories') || []
+                memories: DB.get('memories') || [],
+                counts: DB.get('counts') || {}
             };
-            console.log('✅ تم تحميل البيانات المحلية بنجاح');
+            console.log('✅ تم تحميل البيانات:', db);
+            initParticles();
             route();
         }
 
-        // =================================================
-        // 🧭  التنقل
-        // =================================================
+        // ============================================================
+        //  🧭  التنقل
+        // ============================================================
         function route() {
             const hash = window.location.hash;
             if (hash === '#admin') {
@@ -538,29 +761,96 @@
         }
         window.addEventListener('hashchange', route);
 
-        // =================================================
-        // 🏠  الصفحة العامة
-        // =================================================
+        // ============================================================
+        //  ⏳  حساب المدة منذ الوفاة
+        // ============================================================
+        function getTimeSince(deathDateStr) {
+            if (!deathDateStr) return null;
+            const death = new Date(deathDateStr);
+            if (isNaN(death)) return null;
+            const now = new Date();
+            let years = now.getFullYear() - death.getFullYear();
+            let months = now.getMonth() - death.getMonth();
+            let days = now.getDate() - death.getDate();
+            if (days < 0) { months--;
+                days += new Date(now.getFullYear(), now.getMonth(), 0).getDate(); }
+            if (months < 0) { years--;
+                months += 12; }
+            return { years, months, days };
+        }
+
+        // ============================================================
+        //  🏠  الصفحة العامة
+        // ============================================================
         function showPublic() {
             const s = db.settings || {};
             const mainPhoto = s.main_photo_url ||
                 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22><rect fill=%22%231a1a2e%22 width=%22400%22 height=%22400%22/><text fill=%22%23d4af37%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 font-size=%2260%22>👤</text></svg>';
 
-            document.body.innerHTML = '<div class="container">' +
-                '<div class="hero fade-in d1"><div style="font-size:2.5rem">🕯️</div><p class="subtitle">إلى روح والدي الغالي</p><h1>رحمة الله عليك يا أبي</h1><p style="color:#888;margin-top:5px">تغمّده الله بواسع رحمته وأسكنه فسيح جناته</p></div>' +
-                '<div class="text-center fade-in d2"><div class="main-photo-wrap"><img src="' + esc(mainPhoto) +
-                '" class="main-photo" alt="والدي" onerror="this.src=\'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22><rect fill=%22%231a1a2e%22 width=%22400%22 height=%22400%22/><text fill=%22%23d4af37%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 font-size=%2260%22>👤</text></svg>\'"></div><h2 class="father-name">' +
-                esc(s.father_name || 'والدي الغالي') + '</h2><p class="dates">' + esc(s.birth_date || '') + ' — ' + esc(s
-                    .death_date || '') + '</p></div>' +
-                '<div class="card card-gold fade-in d2"><div style="font-size:1.8rem;text-align:center;margin-bottom:15px">﷽</div><p class="verse">﴿ يَا أَيَّتُهَا النَّفْسُ الْمُطْمَئِنَّةُ<br>ارجِعِي إِلَىٰ رَبِّكِ رَاضِيَةً مَرْضِيَّةً<br>فَادْخُلِي فِي عِبَادِي وَادْخُلِي جَنَّتِي ﴾</p><p style="text-align:center;color:#666;margin-top:15px;font-size:0.85rem">— سورة الفجر، الآيات 27-30 —</p></div>' +
-                '<div class="fade-in d3"><h2 class="section-title">📿 أذكار ودعاء للراحل</h2><div id="azkarList"></div></div>' +
-                '<div class="fade-in d3"><h2 class="section-title" style="margin-top:30px">📷 ذكريات في صور</h2><div id="galleryList" class="gallery"></div></div>' +
-                '<div class="fade-in d3"><h2 class="section-title" style="margin-top:30px">📖 ذكريات لا تُنسى</h2><div id="memoriesList"></div></div>' +
-                '<div class="fade-in d4"><h2 class="section-title" style="margin-top:30px">💬 سجلّ التعازي والدعاء</h2><div class="card"><div class="comment-form"><input type="text" id="cName" placeholder="اسمك الكريم" maxlength="50"><textarea id="cText" rows="3" placeholder="اكتب دعاء أو تعزية..." maxlength="500"></textarea><button class="btn" onclick="submitComment()" style="align-self:flex-start">إرسال الدعاء 🤲</button></div><div id="commentsList"></div></div></div>' +
-                '<div class="visitor-dua fade-in d4"><h2 class="section-title">✨ زائر كريم؟ ادعُ له</h2><p style="color:#888;margin-bottom:15px">دعوة المسلم لأخيه بظهر الغيب مستجابة</p><div class="dua-box"><p>اللهم ارحم ' +
-                esc(s.father_name || 'والدي') + ' واغفر له<br>وأسكنه الفردوس الأعلى</p></div></div>' +
-                '<div class="footer fade-in d4"><div class="divider"></div><p>🕯️ صدقة جارية على روحه — اللهم تقبّلها</p><p style="margin-top:10px;color:#444">إِنَّا لِلَّهِ وَإِنَّا إِلَيْهِ رَاجِعُونَ</p><p style="margin-top:20px;font-size:0.75rem"><a href="#admin" style="color:#333;text-decoration:none">🔒</a></p></div>' +
-                '</div>';
+            let timeHtml = '';
+            const time = getTimeSince(s.death_date);
+            if (time) {
+                timeHtml =
+                    `<div class="time-counter fade-in d2">🕊️ مضى على رحيله <span>${time.years}</span> سنة و <span>${time.months}</span> شهر و <span>${time.days}</span> يوم</div>`;
+            }
+
+            const root = document.getElementById('app-root');
+            if (!root) return;
+            root.innerHTML = `
+            <div class="container">
+              <div class="hero fade-in d1">
+                <div class="icon-candle">🕯️</div>
+                <p class="subtitle">إلى روح والدي الغالي</p>
+                <h1>رحمة الله عليك يا أبي</h1>
+                <p style="color:#888;margin-top:5px">تغمّده الله بواسع رحمته وأسكنه فسيح جناته</p>
+              </div>
+
+              <div class="text-center fade-in d2">
+                <div class="main-photo-wrap"><img src="${esc(mainPhoto)}" class="main-photo" alt="والدي" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22><rect fill=%22%231a1a2e%22 width=%22400%22 height=%22400%22/><text fill=%22%23d4af37%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 font-size=%2260%22>👤</text></svg>'"></div>
+                <h2 class="father-name">${esc(s.father_name || 'والدي الغالي')}</h2>
+                <p class="dates">${esc(s.birth_date || '')} — ${esc(s.death_date || '')}</p>
+                ${timeHtml}
+              </div>
+
+              <div class="card card-gold fade-in d2">
+                <div style="font-size:2rem;text-align:center;margin-bottom:15px">﷽</div>
+                <p class="verse">﴿ يَا أَيَّتُهَا النَّفْسُ الْمُطْمَئِنَّةُ<br>ارجِعِي إِلَىٰ رَبِّكِ رَاضِيَةً مَرْضِيَّةً<br>فَادْخُلِي فِي عِبَادِي وَادْخُلِي جَنَّتِي ﴾</p>
+                <p style="text-align:center;color:#666;margin-top:15px;font-size:0.85rem">— سورة الفجر، الآيات 27-30 —</p>
+              </div>
+
+              <div class="fade-in d3"><h2 class="section-title" style="color:var(--gold);font-size:1.6rem;text-align:center;margin-bottom:25px;">📿 أذكار ودعاء للراحل</h2><div id="azkarList"></div></div>
+
+              <div class="fade-in d3"><h2 class="section-title" style="color:var(--gold);font-size:1.6rem;text-align:center;margin-top:30px;margin-bottom:15px;">📷 ذكريات في صور</h2><div id="galleryList" class="gallery"></div></div>
+
+              <div class="fade-in d3"><h2 class="section-title" style="color:var(--gold);font-size:1.6rem;text-align:center;margin-top:30px;margin-bottom:15px;">📖 ذكريات لا تُنسى</h2><div id="memoriesList"></div></div>
+
+              <div class="fade-in d4"><h2 class="section-title" style="color:var(--gold);font-size:1.6rem;text-align:center;margin-top:30px;margin-bottom:15px;">💬 سجلّ التعازي والدعاء</h2>
+                <div class="card">
+                  <div class="comment-form">
+                    <input type="text" id="cName" placeholder="اسمك الكريم" maxlength="50">
+                    <textarea id="cText" rows="3" placeholder="اكتب دعاء أو تعزية..." maxlength="500"></textarea>
+                    <button class="btn" onclick="submitComment()" style="align-self:flex-start">إرسال الدعاء 🤲</button>
+                  </div>
+                  <div id="commentsList"></div>
+                </div>
+              </div>
+
+              <div class="visitor-dua fade-in d4" style="text-align:center;padding:30px 0;">
+                <h2 class="section-title" style="color:var(--gold);font-size:1.6rem;">✨ زائر كريم؟ ادعُ له</h2>
+                <p style="color:#888;margin-bottom:15px">دعوة المسلم لأخيه بظهر الغيب مستجابة</p>
+                <div class="dua-box" style="display:inline-block;background:rgba(212,175,55,0.08);border:1px solid rgba(212,175,55,0.25);border-radius:30px;padding:25px 45px;">
+                  <p style="color:var(--gold);font-size:1.3rem;font-weight:700;">اللهم ارحم ${esc(s.father_name || 'والدي')} واغفر له<br>وأسكنه الفردوس الأعلى</p>
+                </div>
+              </div>
+
+              <div class="footer fade-in d4">
+                <div class="divider"></div>
+                <p>🕯️ صدقة جارية على روحه — اللهم تقبّلها</p>
+                <p style="margin-top:10px;color:#444">إِنَّا لِلَّهِ وَإِنَّا إِلَيْهِ رَاجِعُونَ</p>
+                <p style="margin-top:25px;font-size:0.75rem"><a href="#admin" style="color:#333;text-decoration:none">🔒</a></p>
+              </div>
+            </div>
+          `;
 
             renderAzkar();
             renderGallery();
@@ -568,31 +858,41 @@
             renderComments();
         }
 
-        // =================================================
-        // 🖼️  دوال العرض
-        // =================================================
+        // ============================================================
+        //  🖼️  دوال العرض (مع عدادات التسبيح)
+        // ============================================================
         function renderAzkar() {
             const el = $('azkarList');
             if (!el) return;
             const list = db.azkar || [];
-            el.innerHTML = list.map((z, i) =>
-                '<div class="azkar-item fade-in d' + Math.min(i + 1, 4) + '"><span class="counter">' + (z.repeat_count || 1) +
-                'x</span>' + esc(z.text) + '</div>'
-            ).join('');
+            const counts = db.counts || {};
+            el.innerHTML = list.map((z, i) => {
+                const count = counts[z.id] || 0;
+                return `
+              <div class="azkar-item fade-in d${Math.min(i+1,4)}">
+                <div class="text-wrap"><span class="counter-badge">${z.repeat_count || 1}x</span> ${esc(z.text)}</div>
+                <div class="azkar-actions">
+                  <span class="count-display">${count}</span>
+                  <button class="btn-sm btn-gold" onclick="incrementCounter('${z.id}')">+1</button>
+                  <button class="btn-sm btn-outline-gold" onclick="resetCounter('${z.id}')">↺</button>
+                </div>
+              </div>
+            `;
+            }).join('');
         }
 
         function renderGallery() {
             const el = $('galleryList');
             if (!el) return;
             const list = db.photos || [];
+            galleryImages = list;
             if (!list.length) {
-                el.innerHTML = '<p style="text-align:center;color:#666;grid-column:1/-1">لا توجد صور بعد. سيتم إضافتها قريباً.</p>';
+                el.innerHTML =
+                    '<p style="text-align:center;color:#666;grid-column:1/-1;padding:30px;">لا توجد صور بعد. سيتم إضافتها قريباً.</p>';
                 return;
             }
-            el.innerHTML = list.map(p =>
-                '<div class="gallery-item" onclick="openModal(\'' + esc(p.url) + '\')"><img src="' + esc(p.url) + '" alt="' + esc(p
-                    .caption || '') + '" loading="lazy" onerror="this.style.display=\'none\'"><div class="gallery-caption">' + esc(p
-                    .caption || 'صورة') + '</div></div>'
+            el.innerHTML = list.map((p, idx) =>
+                `<div class="gallery-item" onclick="openGallery(${idx})"><img src="${esc(p.url)}" alt="${esc(p.caption || '')}" loading="lazy" onerror="this.style.display='none'"><div class="gallery-caption">${esc(p.caption || 'صورة')}</div></div>`
             ).join('');
         }
 
@@ -601,8 +901,7 @@
             if (!el) return;
             const list = db.memories || [];
             el.innerHTML = list.map(m =>
-                '<div class="card fade-in d3"><h3 style="color:var(--gold);margin-bottom:10px">' + esc(m.title) +
-                '</h3><p style="color:#bbb">' + esc(m.content) + '</p></div>'
+                `<div class="card fade-in d3"><h3 style="color:var(--gold);margin-bottom:12px;font-size:1.3rem;">${esc(m.title)}</h3><p style="color:#bbb;">${esc(m.content)}</p></div>`
             ).join('');
         }
 
@@ -611,19 +910,92 @@
             if (!el) return;
             const list = (db.comments || []).filter(c => c.approved !== false);
             if (!list.length) {
-                el.innerHTML = '<p style="text-align:center;color:#666">كن أول من يدعو له 🤲</p>';
+                el.innerHTML = '<p style="text-align:center;color:#666;padding:15px;">كن أول من يدعو له 🤲</p>';
                 return;
             }
             el.innerHTML = list.map(c =>
-                '<div class="comment-item"><div class="comment-name">' + esc(c.name) + '</div><div class="comment-text">' + esc(c
-                    .message) + '</div><div class="comment-date">' + (c.created_at ? new Date(c.created_at).toLocaleDateString(
-                    'ar-EG') : '') + '</div></div>'
+                `<div class="comment-item"><div class="comment-name">${esc(c.name)}</div><div class="comment-text">${esc(c.message)}</div><div class="comment-date">${c.created_at ? new Date(c.created_at).toLocaleDateString('ar-EG') : ''}</div></div>`
             ).join('');
         }
 
-        // =================================================
-        // 💬  إرسال تعليق
-        // =================================================
+        // ============================================================
+        //  📿  عدادات التسبيح
+        // ============================================================
+        function incrementCounter(id) {
+            if (!db.counts) db.counts = {};
+            db.counts[id] = (db.counts[id] || 0) + 1;
+            DB.set('counts', db.counts);
+            renderAzkar();
+        }
+
+        function resetCounter(id) {
+            if (!db.counts) db.counts = {};
+            db.counts[id] = 0;
+            DB.set('counts', db.counts);
+            renderAzkar();
+        }
+
+        // ============================================================
+        //  🖼️  معرض الصور (سلايدر)
+        // ============================================================
+        function openGallery(index) {
+            currentGalleryIndex = index;
+            showGalleryModal();
+        }
+
+        function showGalleryModal() {
+            const list = db.photos || [];
+            if (!list.length) return;
+            const p = list[currentGalleryIndex];
+            const total = list.length;
+            const overlay = document.createElement('div');
+            overlay.className = 'modal-overlay';
+            overlay.id = 'galleryModal';
+            overlay.innerHTML = `
+            <div class="modal-close" onclick="closeGallery()">✕</div>
+            <div class="modal-content">
+              <div class="modal-nav prev" onclick="changeGallery(-1)">‹</div>
+              <img src="${esc(p.url)}" alt="${esc(p.caption || '')}" onerror="this.alt='خطأ في التحميل'">
+              <div class="modal-nav next" onclick="changeGallery(1)">›</div>
+            </div>
+            <div style="color:#aaa;margin-top:15px;font-size:0.9rem;">${currentGalleryIndex+1} / ${total} - ${esc(p.caption || '')}</div>
+          `;
+            overlay.onclick = (e) => { if (e.target === overlay) closeGallery(); };
+            document.body.appendChild(overlay);
+            document.body.style.overflow = 'hidden';
+            document.addEventListener('keydown', galleryKeyHandler);
+        }
+
+        function changeGallery(dir) {
+            const list = db.photos || [];
+            if (!list.length) return;
+            currentGalleryIndex = (currentGalleryIndex + dir + list.length) % list.length;
+            const modal = document.getElementById('galleryModal');
+            if (modal) {
+                const img = modal.querySelector('.modal-content img');
+                const caption = modal.querySelector('div:last-child');
+                const p = list[currentGalleryIndex];
+                if (img) img.src = p.url;
+                if (caption) caption.textContent = `${currentGalleryIndex+1} / ${list.length} - ${p.caption || ''}`;
+            }
+        }
+
+        function galleryKeyHandler(e) {
+            if (e.key === 'ArrowLeft') changeGallery(-1);
+            else if (e.key === 'ArrowRight') changeGallery(1);
+            else if (e.key === 'Escape') closeGallery();
+        }
+
+        function closeGallery() {
+            const modal = document.getElementById('galleryModal');
+            if (modal) modal.remove();
+            document.body.style.overflow = '';
+            document.removeEventListener('keydown', galleryKeyHandler);
+        }
+
+        // ============================================================
+        //  💬  إرسال تعليق
+        // ============================================================
         function submitComment() {
             const name = $('cName').value.trim(),
                 message = $('cText').value.trim();
@@ -637,15 +1009,30 @@
             renderComments();
         }
 
-        // =================================================
-        // 🔐  شاشة الدخول
-        // =================================================
+        // ============================================================
+        //  🔐  شاشة الدخول
+        // ============================================================
         function showAdminLogin() {
-            document.body.innerHTML = '<div class="container"><div class="admin-login card"><div style="font-size:3rem;margin-bottom:10px">🔒</div><h2>لوحة تحكم الموقع</h2><p style="color:#888;margin-bottom:20px;font-size:0.9rem">أدخل كلمة المرور</p><div class="comment-form" style="text-align:center"><input type="password" id="aPass" placeholder="كلمة المرور" style="text-align:center"><button class="btn" onclick="checkAdmin()" style="width:100%">دخول</button></div><p style="margin-top:15px"><a href="#" onclick="window.location.hash=\'\';return false;" style="color:#666;text-decoration:none">← العودة للموقع</a></p></div></div>';
+            const root = document.getElementById('app-root');
+            if (!root) return;
+            root.innerHTML = `
+            <div class="container"><div class="admin-login card" style="text-align:center;">
+              <div style="font-size:3.5rem;margin-bottom:10px;">🔒</div>
+              <h2 style="color:var(--gold);font-size:2rem;">لوحة تحكم الموقع</h2>
+              <p style="color:#888;margin-bottom:25px;">أدخل كلمة المرور</p>
+              <div class="comment-form" style="max-width:300px;margin:0 auto;">
+                <input type="password" id="aPass" placeholder="كلمة المرور" style="text-align:center;">
+                <button class="btn" onclick="checkAdmin()" style="width:100%;">دخول</button>
+              </div>
+              <p style="margin-top:20px;"><a href="#" onclick="window.location.hash='';return false;" style="color:#666;text-decoration:none;">← العودة للموقع</a></p>
+            </div></div>
+          `;
         }
 
         function checkAdmin() {
-            if ($('aPass').value === ADMIN_PASS) {
+            const pass = $('aPass');
+            if (!pass) return;
+            if (pass.value === ADMIN_PASS) {
                 isAdmin = true;
                 window.location.hash = '#admin';
                 showAdmin();
@@ -654,16 +1041,48 @@
             }
         }
 
-        // =================================================
-        // ⚙️  لوحة التحكم
-        // =================================================
+        // ============================================================
+        //  ⚙️  لوحة التحكم (مطوّرة)
+        // ============================================================
         function showAdmin() {
-            document.body.innerHTML = '<div class="container"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding:15px 0;border-bottom:1px solid rgba(255,255,255,0.08);flex-wrap:wrap;gap:10px"><h2 style="color:var(--gold)">⚙️ لوحة التحكم</h2><div><span style="color:#888;font-size:0.85rem;margin-left:15px">🟡 محلي</span><button class="btn btn-outline" style="padding:8px 16px;font-size:0.85rem" onclick="adminLogout()">خروج</button></div></div><div class="stats-grid"><div class="stat-card"><div class="stat-number">' +
-                (db.photos || []).length +
-                '</div><div class="stat-label">صور</div></div><div class="stat-card"><div class="stat-number">' + (db.comments || [])
-                .length + '</div><div class="stat-label">تعليقات</div></div><div class="stat-card"><div class="stat-number">' + (db
-                    .azkar || []).length + '</div><div class="stat-label">أذكار</div></div><div class="stat-card"><div class="stat-number">' +
-                (db.memories || []).length + '</div><div class="stat-label">ذكريات</div></div></div><div class="tabs"><button class="tab active" onclick="switchTab(\'settings\',this)">⚙️ الإعدادات</button><button class="tab" onclick="switchTab(\'photos\',this)">📷 الصور</button><button class="tab" onclick="switchTab(\'azkar\',this)">📿 الأذكار</button><button class="tab" onclick="switchTab(\'memories\',this)">📖 الذكريات</button><button class="tab" onclick="switchTab(\'comments\',this)">💬 التعليقات</button></div><div id="tab-settings" class="admin-section active"></div><div id="tab-photos" class="admin-section"></div><div id="tab-azkar" class="admin-section"></div><div id="tab-memories" class="admin-section"></div><div id="tab-comments" class="admin-section"></div><p style="text-align:center;margin-top:30px"><a href="#" onclick="window.location.hash=\'\';return false;" style="color:#666;text-decoration:none">← العودة للموقع</a></p></div>';
+            const root = document.getElementById('app-root');
+            if (!root) return;
+            root.innerHTML = `
+            <div class="container">
+              <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px;padding:20px 0;border-bottom:1px solid rgba(255,255,255,0.06);margin-bottom:25px;">
+                <h2 style="color:var(--gold);font-size:2rem;">⚙️ لوحة التحكم</h2>
+                <div>
+                  <span style="color:#888;font-size:0.85rem;margin-left:15px;">🟡 محلي</span>
+                  <button class="btn-sm btn-outline-gold" onclick="adminLogout()" style="padding:8px 20px;">خروج</button>
+                </div>
+              </div>
+
+              <div class="stats-grid">
+                <div class="stat-card"><div class="stat-number">${(db.photos||[]).length}</div><div class="stat-label">صور</div></div>
+                <div class="stat-card"><div class="stat-number">${(db.comments||[]).length}</div><div class="stat-label">تعليقات</div></div>
+                <div class="stat-card"><div class="stat-number">${(db.azkar||[]).length}</div><div class="stat-label">أذكار</div></div>
+                <div class="stat-card"><div class="stat-number">${(db.memories||[]).length}</div><div class="stat-label">ذكريات</div></div>
+              </div>
+
+              <div class="tabs">
+                <button class="tab active" onclick="switchTab('settings',this)">⚙️ الإعدادات</button>
+                <button class="tab" onclick="switchTab('photos',this)">📷 الصور</button>
+                <button class="tab" onclick="switchTab('azkar',this)">📿 الأذكار</button>
+                <button class="tab" onclick="switchTab('memories',this)">📖 الذكريات</button>
+                <button class="tab" onclick="switchTab('comments',this)">💬 التعليقات</button>
+                <button class="tab" onclick="switchTab('tools',this)">🔧 أدوات</button>
+              </div>
+
+              <div id="tab-settings" class="admin-section active"></div>
+              <div id="tab-photos" class="admin-section"></div>
+              <div id="tab-azkar" class="admin-section"></div>
+              <div id="tab-memories" class="admin-section"></div>
+              <div id="tab-comments" class="admin-section"></div>
+              <div id="tab-tools" class="admin-section"></div>
+
+              <p style="text-align:center;margin-top:40px;"><a href="#" onclick="window.location.hash='';return false;" style="color:#666;text-decoration:none;">← العودة للموقع</a></p>
+            </div>
+          `;
             renderAdminTabs();
         }
 
@@ -672,71 +1091,127 @@
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             const el = $('tab-' + tab);
             if (el) el.classList.add('active');
-            btn.classList.add('active');
+            if (btn) btn.classList.add('active');
         }
 
         function renderAdminTabs() {
             const s = db.settings || {};
 
-            // الإعدادات
-            $('tab-settings').innerHTML = '<div class="card"><h3 style="color:var(--gold);margin-bottom:15px">معلومات الموقع</h3><div class="comment-form"><label style="color:#aaa;font-size:0.9rem">اسم الوالد</label><input type="text" id="sName" value="' +
-                esc(s.father_name || '') +
-                '"><label style="color:#aaa;font-size:0.9rem">تاريخ الميلاد</label><input type="text" id="sBirth" value="' + esc(s
-                    .birth_date || '') +
-                '"><label style="color:#aaa;font-size:0.9rem">تاريخ الوفاة</label><input type="text" id="sDeath" value="' + esc(s
-                    .death_date || '') +
-                '"><label style="color:#aaa;font-size:0.9rem">رابط الصورة الرئيسية</label><input type="text" id="sPhoto" value="' +
-                esc(s.main_photo_url || '') +
-                '"><button class="btn" onclick="saveSettings()">💾 حفظ</button></div></div>';
+            // === الإعدادات ===
+            $('tab-settings').innerHTML = `
+            <div class="card">
+              <h3 style="color:var(--gold);margin-bottom:20px;">معلومات الموقع</h3>
+              <div class="comment-form">
+                <label style="color:#aaa;">اسم الوالد</label>
+                <input type="text" id="sName" value="${esc(s.father_name||'')}">
+                <label style="color:#aaa;">تاريخ الميلاد</label>
+                <input type="date" id="sBirth" value="${esc(s.birth_date||'')}">
+                <label style="color:#aaa;">تاريخ الوفاة (لحساب المدة)</label>
+                <input type="date" id="sDeath" value="${esc(s.death_date||'')}">
+                <label style="color:#aaa;">رابط الصورة الرئيسية</label>
+                <input type="text" id="sPhoto" value="${esc(s.main_photo_url||'')}" placeholder="https://...">
+                <button class="btn" onclick="saveSettings()">💾 حفظ الإعدادات</button>
+              </div>
+            </div>
+          `;
 
-            // الصور
+            // === الصور ===
             const photos = db.photos || [];
-            $('tab-photos').innerHTML = '<div class="card"><h3 style="color:var(--gold);margin-bottom:15px">إضافة صورة (برابط)</h3><div class="comment-form"><input type="text" id="pUrl" placeholder="رابط الصورة"><input type="text" id="pCap" placeholder="وصف الصورة"><button class="btn" onclick="addPhoto()">➕ إضافة</button></div></div><div class="card" style="margin-top:20px"><h3 style="color:var(--gold);margin-bottom:15px">الصور (' +
-                photos.length +
-                ')</h3>' + (photos.length ? '<table class="admin-table"><tr><th>الصورة</th><th>الوصف</th><th>حذف</th></tr>' + photos
-                .map((p, i) => '<tr><td><img src="' + esc(p.url) +
-                    '" style="width:60px;height:60px;object-fit:cover;border-radius:8px" onerror="this.style.display=\'none\'"></td><td>' +
-                    esc(p.caption || '-') +
-                    '</td><td><button class="btn btn-danger" style="padding:6px 12px;font-size:0.8rem" onclick="delPhoto(' + i +
-                    ')">🗑️</button></td></tr>').join('') + '</table>' : '<p style="color:#666">لا توجد صور</p>') + '</div>';
+            $('tab-photos').innerHTML = `
+            <div class="card">
+              <h3 style="color:var(--gold);margin-bottom:15px;">إضافة صورة (برابط)</h3>
+              <div class="comment-form">
+                <input type="text" id="pUrl" placeholder="رابط الصورة">
+                <input type="text" id="pCap" placeholder="وصف الصورة">
+                <button class="btn" onclick="addPhoto()">➕ إضافة</button>
+              </div>
+            </div>
+            <div class="card">
+              <h3 style="color:var(--gold);margin-bottom:15px;">الصور (${photos.length})</h3>
+              ${photos.length ? `<table class="admin-table"><tr><th>الصورة</th><th>الوصف</th><th>حذف</th></tr>
+                ${photos.map((p,i) => `<tr><td><img src="${esc(p.url)}" style="width:60px;height:60px;object-fit:cover;border-radius:12px;" onerror="this.style.display='none'"></td><td>${esc(p.caption||'-')}</td><td><button class="btn-sm btn-danger" onclick="delPhoto(${i})">🗑️</button></td></tr>`).join('')}
+              </table>` : '<p style="color:#666;">لا توجد صور</p>'}
+            </div>
+          `;
 
-            // الأذكار
+            // === الأذكار ===
             const azkar = db.azkar || [];
-            $('tab-azkar').innerHTML = '<div class="card"><h3 style="color:var(--gold);margin-bottom:15px">إضافة ذكر</h3><div class="comment-form"><textarea id="zText" rows="3" placeholder="نص الذكر..."></textarea><input type="number" id="zCount" value="1" min="1" style="width:120px"><button class="btn" onclick="addAzkar()">➕ إضافة</button></div></div><div class="card" style="margin-top:20px"><h3 style="color:var(--gold);margin-bottom:15px">الأذكار</h3>' +
-                (azkar.length ? azkar.map((z, i) =>
-                    '<div class="azkar-item" style="display:flex;justify-content:space-between;align-items:center"><div><span class="counter">' +
-                    (z.repeat_count || 1) + 'x</span> ' + esc(z.text) +
-                    '</div><button class="btn btn-danger" style="padding:6px 12px;font-size:0.8rem" onclick="delAzkar(' + i +
-                    ')">🗑️</button></div>').join('') : '<p style="color:#666">لا توجد أذكار</p>') + '</div>';
+            $('tab-azkar').innerHTML = `
+            <div class="card">
+              <h3 style="color:var(--gold);margin-bottom:15px;">إضافة ذكر جديد</h3>
+              <div class="comment-form">
+                <textarea id="zText" rows="3" placeholder="نص الذكر..."></textarea>
+                <input type="number" id="zCount" value="1" min="1" style="width:120px;">
+                <button class="btn" onclick="addAzkar()">➕ إضافة</button>
+              </div>
+            </div>
+            <div class="card">
+              <h3 style="color:var(--gold);margin-bottom:15px;">الأذكار الحالية</h3>
+              ${azkar.length ? azkar.map((z,i) =>
+                `<div class="azkar-item" style="display:flex;justify-content:space-between;align-items:center;"><div><span class="counter-badge">${z.repeat_count||1}x</span> ${esc(z.text)}</div><button class="btn-sm btn-danger" onclick="delAzkar(${i})">🗑️</button></div>`
+              ).join('') : '<p style="color:#666;">لا توجد أذكار</p>'}
+            </div>
+          `;
 
-            // الذكريات
+            // === الذكريات ===
             const mems = db.memories || [];
-            $('tab-memories').innerHTML = '<div class="card"><h3 style="color:var(--gold);margin-bottom:15px">إضافة ذكرى</h3><div class="comment-form"><input type="text" id="mTitle" placeholder="عنوان الذكرى"><textarea id="mContent" rows="4" placeholder="تفاصيل الذكرى..."></textarea><button class="btn" onclick="addMemory()">➕ إضافة</button></div></div><div class="card" style="margin-top:20px"><h3 style="color:var(--gold);margin-bottom:15px">الذكريات</h3>' +
-                (mems.length ? mems.map((m, i) =>
-                    '<div class="card" style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;align-items:start"><div><h4 style="color:var(--gold)">' +
-                    esc(m.title) + '</h4><p style="color:#bbb;font-size:0.9rem">' + esc(m.content) +
-                    '</p></div><button class="btn btn-danger" style="padding:6px 12px;font-size:0.8rem" onclick="delMemory(' + i +
-                    ')">🗑️</button></div></div>').join('') : '<p style="color:#666">لا توجد ذكريات</p>') + '</div>';
+            $('tab-memories').innerHTML = `
+            <div class="card">
+              <h3 style="color:var(--gold);margin-bottom:15px;">إضافة ذكرى جديدة</h3>
+              <div class="comment-form">
+                <input type="text" id="mTitle" placeholder="عنوان الذكرى">
+                <textarea id="mContent" rows="4" placeholder="تفاصيل الذكرى..."></textarea>
+                <button class="btn" onclick="addMemory()">➕ إضافة</button>
+              </div>
+            </div>
+            <div class="card">
+              <h3 style="color:var(--gold);margin-bottom:15px;">الذكريات (${mems.length})</h3>
+              ${mems.length ? mems.map((m,i) =>
+                `<div class="card" style="margin-bottom:12px;display:flex;justify-content:space-between;align-items:start;"><div><h4 style="color:var(--gold);">${esc(m.title)}</h4><p style="color:#bbb;">${esc(m.content)}</p></div><button class="btn-sm btn-danger" onclick="delMemory(${i})">🗑️</button></div>`
+              ).join('') : '<p style="color:#666;">لا توجد ذكريات</p>'}
+            </div>
+          `;
 
-            // التعليقات
+            // === التعليقات ===
             const comments = db.comments || [];
-            $('tab-comments').innerHTML = '<div class="card"><h3 style="color:var(--gold);margin-bottom:15px">التعليقات (' +
-                comments.length +
-                ')</h3>' + (comments.length ? '<table class="admin-table"><tr><th>الاسم</th><th>الرسالة</th><th>حذف</th></tr>' +
-                comments.map((c, i) => '<tr><td>' + esc(c.name) + '</td><td style="max-width:300px;word-break:break-word">' + esc(c
-                    .message) + '</td><td><button class="btn btn-danger" style="padding:6px 12px;font-size:0.8rem" onclick="delComment(' +
-                    i + ')">🗑️</button></td></tr>').join('') + '</table>' : '<p style="color:#666">لا توجد تعليقات</p>') +
-                '</div>';
+            $('tab-comments').innerHTML = `
+            <div class="card">
+              <h3 style="color:var(--gold);margin-bottom:15px;">التعليقات (${comments.length})</h3>
+              ${comments.length ? `<table class="admin-table"><tr><th>الاسم</th><th>الرسالة</th><th>حذف</th></tr>
+                ${comments.map((c,i) => `<tr><td>${esc(c.name)}</td><td style="max-width:300px;word-break:break-word;">${esc(c.message)}</td><td><button class="btn-sm btn-danger" onclick="delComment(${i})">🗑️</button></td></tr>`).join('')}
+              </table>` : '<p style="color:#666;">لا توجد تعليقات</p>'}
+              <button class="btn btn-danger" onclick="clearAllComments()" style="margin-top:20px;">🗑️ حذف كل التعليقات</button>
+            </div>
+          `;
+
+            // === أدوات (تصدير/استيراد) ===
+            $('tab-tools').innerHTML = `
+            <div class="card">
+              <h3 style="color:var(--gold);margin-bottom:15px;">📦 تصدير واستيراد البيانات</h3>
+              <div style="display:flex;gap:15px;flex-wrap:wrap;">
+                <button class="btn" onclick="exportData()">📤 تصدير JSON</button>
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <input type="file" id="importFile" accept=".json" style="color:#aaa;background:transparent;border:1px solid #444;padding:10px;border-radius:12px;">
+                  <button class="btn btn-outline" onclick="importData()">📥 استيراد</button>
+                </div>
+              </div>
+              <p style="color:#888;margin-top:15px;font-size:0.85rem;">استخدم هذه الأدوات لعمل نسخة احتياطية أو نقل البيانات بين الأجهزة.</p>
+            </div>
+          `;
         }
 
-        // =================================================
-        // 🗂️  عمليات الإدارة (CRUD)
-        // =================================================
+        // ============================================================
+        //  🗂️  عمليات الإدارة (CRUD)
+        // ============================================================
         function saveSettings() {
-            db.settings = { father_name: $('sName').value, birth_date: $('sBirth').value, death_date: $('sDeath').value,
-                main_photo_url: $('sPhoto').value };
+            db.settings = {
+                father_name: $('sName').value,
+                birth_date: $('sBirth').value,
+                death_date: $('sDeath').value,
+                main_photo_url: $('sPhoto').value
+            };
             DB.set('settings', db.settings);
-            toast('✅ تم الحفظ');
+            toast('✅ تم حفظ الإعدادات');
             renderAdminTabs();
         }
 
@@ -752,7 +1227,7 @@
             renderAdminTabs();
         }
 
-        function delPhoto(i) { if (!confirm('هل أنت متأكد؟')) return;
+        function delPhoto(i) { if (!confirm('حذف هذه الصورة؟')) return;
             db.photos.splice(i, 1);
             DB.set('photos', db.photos);
             renderAdminTabs(); }
@@ -761,14 +1236,14 @@
             const text = $('zText').value.trim(),
                 count = parseInt($('zCount').value) || 1;
             if (!text) { toast('اكتب نص الذكر'); return; }
-            db.azkar.push({ id: generateId(), text, repeat_count: count, created_at: new Date().toISOString() });
+            db.azkar.push({ id: generateId(), text, repeat_count: count });
             DB.set('azkar', db.azkar);
             $('zText').value = '';
             toast('✅ تمت الإضافة');
             renderAdminTabs();
         }
 
-        function delAzkar(i) { if (!confirm('هل أنت متأكد؟')) return;
+        function delAzkar(i) { if (!confirm('حذف هذا الذكر؟')) return;
             db.azkar.splice(i, 1);
             DB.set('azkar', db.azkar);
             renderAdminTabs(); }
@@ -785,23 +1260,82 @@
             renderAdminTabs();
         }
 
-        function delMemory(i) { if (!confirm('هل أنت متأكد؟')) return;
+        function delMemory(i) { if (!confirm('حذف هذه الذكرى؟')) return;
             db.memories.splice(i, 1);
             DB.set('memories', db.memories);
             renderAdminTabs(); }
 
-        function delComment(i) { if (!confirm('هل أنت متأكد؟')) return;
+        function delComment(i) { if (!confirm('حذف هذا التعليق؟')) return;
             db.comments.splice(i, 1);
             DB.set('comments', db.comments);
             renderAdminTabs(); }
 
+        function clearAllComments() {
+            if (!confirm('حذف جميع التعليقات نهائياً؟')) return;
+            db.comments = [];
+            DB.set('comments', db.comments);
+            renderAdminTabs();
+            toast('✅ تم حذف جميع التعليقات');
+        }
+
+        // ============================================================
+        //  📤  أدوات التصدير والاستيراد
+        // ============================================================
+        function exportData() {
+            const data = {
+                settings: db.settings,
+                photos: db.photos,
+                azkar: db.azkar,
+                memories: db.memories,
+                comments: db.comments,
+                counts: db.counts
+            };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `memorial_backup_${new Date().toISOString().slice(0,10)}.json`;
+            a.click();
+            toast('✅ تم التصدير');
+        }
+
+        function importData() {
+            const fileInput = $('importFile');
+            if (!fileInput || !fileInput.files.length) { toast('اختر ملف JSON أولاً'); return; }
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (!data.settings || !data.photos) { toast('❌ ملف غير صالح'); return; }
+                    if (!confirm('سيتم استبدال جميع البيانات الحالية. هل أنت متأكد؟')) return;
+                    db.settings = data.settings || {};
+                    db.photos = data.photos || [];
+                    db.azkar = data.azkar || [];
+                    db.memories = data.memories || [];
+                    db.comments = data.comments || [];
+                    db.counts = data.counts || {};
+                    DB.set('settings', db.settings);
+                    DB.set('photos', db.photos);
+                    DB.set('azkar', db.azkar);
+                    DB.set('memories', db.memories);
+                    DB.set('comments', db.comments);
+                    DB.set('counts', db.counts);
+                    toast('✅ تم الاستيراد بنجاح!');
+                    renderAdminTabs();
+                } catch (err) { toast('❌ فشل الاستيراد: ' + err.message); }
+            };
+            reader.readAsText(fileInput.files[0]);
+        }
+
+        // ============================================================
+        //  🚪  تسجيل الخروج
+        // ============================================================
         function adminLogout() { isAdmin = false;
             window.location.hash = '';
             route(); }
 
-        // =================================================
-        // 🏁  بدء التشغيل
-        // =================================================
+        // ============================================================
+        //  🏁  بدء التشغيل
+        // ============================================================
         document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
